@@ -17,4 +17,4 @@ Repositori ini adalah koleksi kustom *skills* dan otomasi *workflow* untuk Googl
    - Ketika ada perubahan baru yang di-*pull* dari remote, cocokkan isi skill dengan dokumentasi yang ada.
    - Jika terdapat perbedaan atau penyesuaian baru, siapkan *staged commit* (`git add`) dengan pesan commit deskriptif (Conventional Commits) agar repositori selalu siap di-*push* berkala.
 4. **Git Version Control**:
-   - Seluruh folder skill, dokumentasi, dan aturan repositori harus selalu ter-track di Git (jangan pernah dimasukkan ke git exclude).
+   - Seluruh folder skill, dokumentasi, dan aturan repositori harus selalu ter-track di Git untuk sinkronisasi tim.

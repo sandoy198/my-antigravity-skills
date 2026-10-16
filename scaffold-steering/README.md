@@ -27,7 +27,7 @@ Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf,
    - Kebutuhan test runner dan deployment runbook.
 
 4. **🚀 Git Version-Controlled (Siap Push & Kolaborasi Tim)**:
-   Seluruh file steering (`AGENTS.md`, `.agents/`, `docs/`) dibiarkan di-*track* oleh Git tanpa dimasukkan ke git exclude, sehingga seluruh tim dapat menyinkronkan standar proyek secara berkala melalui `git push` dan `git pull`.
+   Seluruh file steering (`AGENTS.md`, `.agents/`, `docs/`) sepenuhnya di-*track* oleh Git, sehingga seluruh tim dapat menyinkronkan standar proyek secara berkala melalui `git push` dan `git pull`.
 
 ---
 

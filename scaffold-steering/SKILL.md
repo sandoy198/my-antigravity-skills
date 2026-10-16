@@ -31,7 +31,7 @@ When operating on **existing projects** or repositories where some steering file
      See [AGENTS.md](AGENTS.md) for full project rules and instructions.
      ```
    - If `AGENTS.md` already exists: Smart-merge into `AGENTS.md`.
-4. **Git Version-Controlled by Default**: Do not exclude steering files in `.git/info/exclude`. All steering files (`AGENTS.md`, `.agents/`, `docs/`) should remain tracked by Git for continuous team sharing and periodic pushes.
+4. **Git Version-Controlled by Default**: All steering files (`AGENTS.md`, `.agents/`, `docs/`) must remain actively tracked by Git for continuous team sharing and periodic pushes.
 
 ---
 
