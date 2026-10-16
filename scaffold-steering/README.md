@@ -1,25 +1,34 @@
 # Scaffold Steering Skill
 
-Skill otomasi untuk menginisialisasi dan menyusun konfigurasi *steering* AI, aturan proyek (*rules*), pondasi arsitektur, dan ringkasan PRD secara interaktif melalui wawancara terarah (*Grill-Me interview*). Skill ini berfokus murni pada **inisialisasi proyek**, bukan untuk fase implementasi fitur aktif.
+Skill otomasi untuk menginisialisasi dan menyusun konfigurasi *steering* AI universal (`AGENTS.md`), aturan proyek (*rules*), panduan arsitektur, dan ringkasan PRD secara interaktif melalui wawancara terarah (*Grill-Me interview*). 
+
+Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf, Copilot, Claude Code, Aider, dll.) serta berfokus murni pada **inisialisasi proyek**.
 
 ---
 
 ## 🌟 Fitur Utama
 
-1. **🛡️ Kebijakan Non-Destruktif & Smart-Merge**:
+1. **🌐 Standar Universal `AGENTS.md` & Smart Migration**:
+   - Men-generate file kemudi utama bernama **`AGENTS.md`** di root proyek, yang merupakan standar terbuka antar vendor AI agent.
+   - **Smart Migration**: Jika proyek sudah terlanjur memiliki `GEMINI.md`, skill akan:
+     1. Membaca seluruh isi aturan lama dari `GEMINI.md`.
+     2. Memindahkan dan menggabungkannya ke `AGENTS.md` tanpa menghapus satu pun aturan yang ada.
+     3. Mengubah `GEMINI.md` menjadi *pointer* ringan yang mengarah ke `AGENTS.md`.
+
+2. **🛡️ Kebijakan Non-Destruktif & Smart-Merge**:
    - **Zero Source-Code Modification**: Tidak akan pernah mengubah atau menghapus kode sumber aplikasi (`src/`, `app/`, dsb.).
-   - **Preserve Existing Rules/Docs**: Jika file seperti `GEMINI.md` atau `docs/prd.md` sudah ada, skill membaca dan mempertahankan isinya, hanya melakukan *smart-merge* untuk bagian yang belum tersedia.
+   - **Preserve Existing Rules/Docs**: Jika file aturan atau dokumentasi sudah ada, skill membaca dan mempertahankan isinya, hanya melakukan *smart-merge* untuk bagian baru yang relevan.
    - **No Duplicate Git Excludes**: Mengecek `.git/info/exclude` sebelum menambahkan *entry* baru agar tidak terjadi duplikasi.
 
-2. **🎤 Grill-Me Interview (Konsultasi Pondasi Proyek)**:
+3. **🎤 Grill-Me Interview (Konsultasi Pondasi Proyek)**:
    Sebelum men-generate file, AI akan menganalisis *stack* proyek dan mengajukan pertanyaan terarah khusus pondasi arsitektur:
    - Dokumen referensi eksternal (API spec third-party, skema database SQL, arsitektur flow).
    - Arsitektur target, database, dan ORM/caching layer.
    - Standar autentikasi & otorisasi (JWT, Session, OAuth2, RBAC).
    - Kebutuhan test runner dan deployment runbook.
 
-3. **🔒 Keamanan Git Lokal (`.git/info/exclude`)**:
-   Secara otomatis mendaftarkan file konfigurasi lokal ke dalam `.git/info/exclude` agar aturan AI personal tidak mengotori *commit* repositori tim.
+4. **🔒 Keamanan Git Lokal (`.git/info/exclude`)**:
+   Secara otomatis mendaftarkan file konfigurasi lokal (`AGENTS.md`, `GEMINI.md`, `.agents/`, `docs/`) ke dalam `.git/info/exclude` agar aturan AI personal tidak mengotori *commit* repositori tim.
 
 ---
 
@@ -29,7 +38,8 @@ Ketika skill ini dijalankan pada suatu proyek, struktur fondasi berikut akan dis
 
 ```text
 <project-root>/
-├── GEMINI.md                            # Konteks proyek dan prinsip kerja agent utama
+├── AGENTS.md                            # Universal project steering (dibaca oleh Antigravity & vendor AI lain)
+├── GEMINI.md                            # (Opsional/Pointer) Mengarah ke AGENTS.md jika sebelumnya sudah ada
 ├── .agents/
 │   ├── rules/
 │   │   ├── code-conventions.md          # Konvensi penamaan, style guide, dan clean code
@@ -70,6 +80,7 @@ init steering untuk proyek ini
 
 AI akan:
 1. Memindai *dependencies* (misal: `pom.xml`, `package.json`, `go.mod`, dsb.).
-2. Mengajukan 4 pertanyaan arsitektur dan fondasi sistem.
-3. Men-generate seluruh struktur *rules*, *skills*, dan *docs* fondasi di atas.
-4. Memastikan `.git/info/exclude` mengamankan file steering AI dari Git commit tim.
+2. Mendeteksi apakah sudah ada `GEMINI.md` atau `AGENTS.md` untuk persiapan migrasi/merge.
+3. Mengajukan 4 pertanyaan arsitektur dan fondasi sistem.
+4. Men-generate atau memigrasikan seluruh aturan ke `AGENTS.md` serta struktur *rules*, *skills*, dan *docs* fondasi.
+5. Memastikan `.git/info/exclude` mengamankan file steering AI dari Git commit tim.

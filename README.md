@@ -8,7 +8,7 @@ Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat
 
 | Skill | Deskripsi Singkat | Trigger Utama |
 | :--- | :--- | :--- |
-| **`scaffold-steering`** | Inisialisasi struktur *steering files* proyek (`GEMINI.md`, `.agents/rules/`, `docs/prd.md`) melalui wawancara interaktif (*Grill-Me interview*) serta proteksi otomatis `.git/info/exclude`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
+| **`scaffold-steering`** | Inisialisasi struktur *steering files* universal (`AGENTS.md`, `.agents/rules/`, `docs/prd.md`) melalui wawancara interaktif (*Grill-Me interview*), proteksi otomatis `.git/info/exclude`, serta dukungan migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
 
 ---
 
@@ -82,10 +82,10 @@ init steering untuk proyek ini
 ```
 
 Agent akan:
-1. Mendeteksi *tech stack* dan *framework* yang ada di root proyek.
+1. Mendeteksi *tech stack* dan memeriksa apakah sudah ada `GEMINI.md` atau `AGENTS.md`.
 2. Melakukan wawancara interaktif (*Grill-Me interview*) mengenai database, arsitektur, autentikasi, referensi dokumen eksternal, dan test/deploy runbook.
 3. Mengonfigurasi `.git/info/exclude` agar file aturan AI tidak mengotori repositori tim.
-4. Men-generate dokumen arsitektur dan aturan fondasi secara terstruktur (`GEMINI.md`, `.agents/rules/`, `docs/prd.md`).
+4. Men-generate atau memigrasikan aturan ke dokumen universal **`AGENTS.md`**, `.agents/rules/`, dan `docs/prd.md`.
 
 ---
 
