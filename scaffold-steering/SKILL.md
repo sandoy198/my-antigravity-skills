@@ -6,14 +6,14 @@ description: >
   interactive "Grill-Me" interview that asks the developer first regarding their tech stack,
   architecture, and any external references/docs before generating them.
   Supports smart migration from legacy GEMINI.md to universal AGENTS.md while preserving existing rules.
-  Automatically configures local .git/info/exclude to ensure AI steering files remain private and safe from team Git commits.
+  Ensures steering files remain version-controlled in Git for seamless team synchronization and periodic pushes.
   Trigger when the user says "init steering", "scaffold steering", "setup rules", "buat steering files",
   "inisialisasi aturan proyek", or "/scaffold-steering".
 ---
 
 # Scaffold Steering Files & Interactive Setup Skill
 
-Use this skill to establish a clean, modular, vendor-neutral, and privacy-safe steering setup during project initialization. The agent will interactively consult the developer first to understand their specific architecture, stack preferences, and external reference documents before finalizing the files.
+Use this skill to establish a clean, modular, vendor-neutral, and version-controlled steering setup during project initialization. The agent will interactively consult the developer first to understand their specific architecture, stack preferences, and external reference documents before finalizing the files.
 
 ## 🛡️ Non-Destructive & Smart-Merge Policy (CRITICAL)
 
@@ -31,7 +31,7 @@ When operating on **existing projects** or repositories where some steering file
      See [AGENTS.md](AGENTS.md) for full project rules and instructions.
      ```
    - If `AGENTS.md` already exists: Smart-merge into `AGENTS.md`.
-4. **No Duplicate Git Excludes**: Check `.git/info/exclude` and only append entries that are not already present.
+4. **Git Version-Controlled by Default**: Do not exclude steering files in `.git/info/exclude`. All steering files (`AGENTS.md`, `.agents/`, `docs/`) should remain tracked by Git for continuous team sharing and periodic pushes.
 
 ---
 
@@ -94,15 +94,5 @@ Populate `docs/prd.md` with high-level foundational context (tanpa mendikte prio
 - System Architecture Overview.
 - Non-Functional Requirements (Security, Performance, Logging).
 
-### Step 7: Configure Local Git Exclude (Privacy Safeguard)
-If the project root is a Git repository (`.git/` folder exists):
-- Ensure `.git/info/exclude` contains the following lines (without duplicating existing lines):
-  ```text
-  AGENTS.md
-  GEMINI.md
-  .agents/
-  docs/
-  ```
-
-### Step 8: Confirmation & Summary
-Print a clean summary tree of the generated structure, showing all created rules, skills, references, and confirming Git exclude status.
+### Step 7: Confirmation & Summary
+Print a clean summary tree of the generated structure, showing all created rules, skills, references, and confirming that files are ready for Git commit.

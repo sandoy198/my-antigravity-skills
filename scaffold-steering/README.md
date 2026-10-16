@@ -2,7 +2,7 @@
 
 Skill otomasi untuk menginisialisasi dan menyusun konfigurasi *steering* AI universal (`AGENTS.md`), aturan proyek (*rules*), panduan arsitektur, dan ringkasan PRD secara interaktif melalui wawancara terarah (*Grill-Me interview*). 
 
-Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf, Copilot, Claude Code, Aider, dll.) serta berfokus murni pada **inisialisasi proyek**.
+Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf, Copilot, Claude Code, Aider, dll.), berfokus murni pada **inisialisasi proyek**, dan **sepenuhnya di-*track* oleh Git** agar dapat di-*push* dan disinkronkan berkala bersama tim.
 
 ---
 
@@ -18,7 +18,6 @@ Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf,
 2. **🛡️ Kebijakan Non-Destruktif & Smart-Merge**:
    - **Zero Source-Code Modification**: Tidak akan pernah mengubah atau menghapus kode sumber aplikasi (`src/`, `app/`, dsb.).
    - **Preserve Existing Rules/Docs**: Jika file aturan atau dokumentasi sudah ada, skill membaca dan mempertahankan isinya, hanya melakukan *smart-merge* untuk bagian baru yang relevan.
-   - **No Duplicate Git Excludes**: Mengecek `.git/info/exclude` sebelum menambahkan *entry* baru agar tidak terjadi duplikasi.
 
 3. **🎤 Grill-Me Interview (Konsultasi Pondasi Proyek)**:
    Sebelum men-generate file, AI akan menganalisis *stack* proyek dan mengajukan pertanyaan terarah khusus pondasi arsitektur:
@@ -27,8 +26,8 @@ Dirancang ramah *multi-vendor* (kompatibel dengan Antigravity, Cursor, Windsurf,
    - Standar autentikasi & otorisasi (JWT, Session, OAuth2, RBAC).
    - Kebutuhan test runner dan deployment runbook.
 
-4. **🔒 Keamanan Git Lokal (`.git/info/exclude`)**:
-   Secara otomatis mendaftarkan file konfigurasi lokal (`AGENTS.md`, `GEMINI.md`, `.agents/`, `docs/`) ke dalam `.git/info/exclude` agar aturan AI personal tidak mengotori *commit* repositori tim.
+4. **🚀 Git Version-Controlled (Siap Push & Kolaborasi Tim)**:
+   Seluruh file steering (`AGENTS.md`, `.agents/`, `docs/`) dibiarkan di-*track* oleh Git tanpa dimasukkan ke git exclude, sehingga seluruh tim dapat menyinkronkan standar proyek secara berkala melalui `git push` dan `git pull`.
 
 ---
 
@@ -83,4 +82,4 @@ AI akan:
 2. Mendeteksi apakah sudah ada `GEMINI.md` atau `AGENTS.md` untuk persiapan migrasi/merge.
 3. Mengajukan 4 pertanyaan arsitektur dan fondasi sistem.
 4. Men-generate atau memigrasikan seluruh aturan ke `AGENTS.md` serta struktur *rules*, *skills*, dan *docs* fondasi.
-5. Memastikan `.git/info/exclude` mengamankan file steering AI dari Git commit tim.
+5. Memastikan seluruh file siap di-*commit* ke repositori Git proyek.

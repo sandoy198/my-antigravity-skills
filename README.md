@@ -8,7 +8,7 @@ Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat
 
 | Skill | Deskripsi Singkat | Trigger Utama |
 | :--- | :--- | :--- |
-| **`scaffold-steering`** | Inisialisasi struktur *steering files* universal (`AGENTS.md`, `.agents/rules/`, `docs/prd.md`) melalui wawancara interaktif (*Grill-Me interview*), proteksi otomatis `.git/info/exclude`, serta dukungan migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
+| **`scaffold-steering`** | Inisialisasi struktur *steering files* universal (`AGENTS.md`, `.agents/rules/`, `docs/prd.md`) melalui wawancara interaktif (*Grill-Me interview*), siap di-*track* Git untuk kolaborasi tim, serta dukungan migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
 
 ---
 
@@ -84,8 +84,8 @@ init steering untuk proyek ini
 Agent akan:
 1. Mendeteksi *tech stack* dan memeriksa apakah sudah ada `GEMINI.md` atau `AGENTS.md`.
 2. Melakukan wawancara interaktif (*Grill-Me interview*) mengenai database, arsitektur, autentikasi, referensi dokumen eksternal, dan test/deploy runbook.
-3. Mengonfigurasi `.git/info/exclude` agar file aturan AI tidak mengotori repositori tim.
-4. Men-generate atau memigrasikan aturan ke dokumen universal **`AGENTS.md`**, `.agents/rules/`, dan `docs/prd.md`.
+3. Men-generate atau memigrasikan aturan ke dokumen universal **`AGENTS.md`**, `.agents/rules/`, dan `docs/prd.md`.
+4. Memastikan seluruh file siap di-*commit* dan di-*push* ke Git untuk disinkronkan berkala dengan tim.
 
 ---
 
@@ -97,6 +97,7 @@ my-antigravity-skills/
 │   ├── README.md
 │   └── SKILL.md
 ├── .gitignore
+├── AGENTS.md
 ├── LICENSE
 └── README.md
 ```
