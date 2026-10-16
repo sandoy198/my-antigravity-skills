@@ -2,18 +2,17 @@
 name: scaffold-steering
 description: >
   Scaffold and initialize standard workspace steering files, rules (GEMINI.md, .agents/rules/),
-  skills (.agents/skills/), PRD documentation (docs/prd.md), and feature specifications (docs/specs/<feature-name>.md)
-  for the active project, with an interactive "Grill-Me" interview that asks the developer first regarding their needs,
+  skills (.agents/skills/), and PRD documentation (docs/prd.md) for the active project, with an
+  interactive "Grill-Me" interview that asks the developer first regarding their tech stack,
   architecture, and any external references/docs before generating them.
   Automatically configures local .git/info/exclude to ensure AI steering files remain private and safe from team Git commits.
   Trigger when the user says "init steering", "scaffold steering", "setup rules", "buat steering files",
-  "inisialisasi aturan proyek", "/scaffold-steering", "buat spec", "tambah spec", "job baru", "new spec",
-  or requests project rule setup with grill-me.
+  "inisialisasi aturan proyek", or "/scaffold-steering".
 ---
 
 # Scaffold Steering Files & Interactive Setup Skill
 
-Use this skill to establish a clean, modular, and privacy-safe steering setup. The agent will interactively consult the developer first to understand their specific architecture, preferences, and external reference documents before finalizing the files.
+Use this skill to establish a clean, modular, and privacy-safe steering setup during project initialization. The agent will interactively consult the developer first to understand their specific architecture, stack preferences, and external reference documents before finalizing the files.
 
 ## 🛡️ Non-Destructive & Smart-Merge Policy (CRITICAL)
 
@@ -40,10 +39,10 @@ Create baseline directories:
 - `.agents/rules/`
 - `.agents/skills/testing/`
 - `.agents/skills/deployment/`
-- `docs/specs/`
+- `docs/`
 
 ### Step 3: Interactive Consultation & Grill-Me Interview (Ask First!)
-Before generating heavy content or arbitrary reference files, present what was detected and **ask the developer targeted questions**:
+Before generating heavy content or arbitrary reference files, present what was detected and **ask the developer targeted questions** focused strictly on project initialization and architecture foundation:
 
 1. **External References & Docs**:
    - *"Apakah Anda memiliki dokumen referensi eksternal yang ingin dimasukkan (misal: API spec third-party, skema database SQL, arsitektur flow)? Jika ada, saya akan siapkan folder `docs/references/` dan mengaitkannya ke PRD."*
@@ -53,14 +52,12 @@ Before generating heavy content or arbitrary reference files, present what was d
    - *"Metode autentikasi apa yang digunakan (JWT, Session, OAuth2, RBAC)?"*
 4. **Testing & Deployment Needs**:
    - *"Apakah ada alur test atau deployment khusus yang butuh skrip pembantu (`scripts/`) atau panduan teknis (`references/`)?"*
-5. **Core Feature Priorities**:
-   - *"Fitur utama apa yang ingin diprioritaskan di dalam `docs/prd.md` saat ini?"*
 
 ### Step 4: Generate Tailored Rule Files
 
 1. **`GEMINI.md`** (Project Root):
-   - Project overview and core principles aligned with developer responses.
-   - Explicit reference: *"Product specifications are defined in `docs/prd.md`."*
+   - Project overview, foundational architecture, and core principles aligned with developer responses.
+   - Explicit reference: *"Product specifications and system overview are defined in `docs/prd.md`."*
    - If references were requested: Link to `docs/references/`.
 
 2. **`.agents/rules/code-conventions.md`**:
@@ -80,26 +77,12 @@ Before generating heavy content or arbitrary reference files, present what was d
 - **`.agents/skills/deployment/SKILL.md`**: Build & deployment runbook. Create `references/` and `scripts/` if requested.
 - **`docs/references/`**: Created if the developer confirmed having external documents, with a starter placeholder/index.
 
-### Step 6: Generate or Merge Master PRD & Job Feature Specs
-
-#### A. Master PRD (`docs/prd.md`)
-Populate `docs/prd.md` with:
-- Feature/Product Overview & Goals based on the interview.
-- User Personas & User Flow.
-- Functional Requirements (Checklist format `- [ ]`) based on developer's priority features.
-- Acceptance Criteria.
-
-#### B. Dedicated Job / Feature Spec (`docs/specs/<feature-name>.md`)
-When the developer introduces a new job, ticket, or distinct feature:
-- Create a dedicated specification file: `docs/specs/<feature-name>.md`.
-- Populate with standard feature spec sections:
-  1. **Overview & Business Goal**: Ringkasan kebutuhan bisnis dan latar belakang tiket/job.
-  2. **Impact & Scope Analysis**: Komponen terdampak (Controller/Endpoint, Service, Repository, Database Tables).
-  3. **API Contracts**: Detail DTO Request dan Response (mengikuti standar kode proyek, misal `JsonResponse` atau `JsonCallback` tanpa wrapper `data`).
-  4. **Database & Schema Changes**: Tabel, kolom baru, query ANSI SQL, atau migrasi JPA Entity.
-  5. **Business Logic & Validations**: Validasi input, batasan hak akses (RBAC), penanganan exception (`ResponseStatus` / `ResponseCode`).
-  6. **Acceptance Criteria & Task Checklist**: Checklist implementasi (`- [ ]`).
-  7. **Tautan Referensi**: Link ke `docs/prd.md` dan alur teknis terkait di `docs/`.
+### Step 6: Generate or Merge Master PRD (`docs/prd.md`)
+Populate `docs/prd.md` with high-level foundational context (tanpa mendikte prioritas fitur implementasi):
+- Product / System Overview & High-level Goals.
+- User Personas & General System Scope.
+- System Architecture Overview.
+- Non-Functional Requirements (Security, Performance, Logging).
 
 ### Step 7: Configure Local Git Exclude (Privacy Safeguard)
 If the project root is a Git repository (`.git/` folder exists):

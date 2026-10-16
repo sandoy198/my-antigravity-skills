@@ -1,6 +1,6 @@
 # Scaffold Steering Skill
 
-Skill otomasi untuk menginisialisasi dan menyusun file konfigurasi *steering* AI, aturan proyek (*rules*), spesifikasi fitur (*specs*), dan dokumen PRD secara interaktif melalui wawancara terarah (*Grill-Me interview*).
+Skill otomasi untuk menginisialisasi dan menyusun konfigurasi *steering* AI, aturan proyek (*rules*), pondasi arsitektur, dan ringkasan PRD secara interaktif melalui wawancara terarah (*Grill-Me interview*). Skill ini berfokus murni pada **inisialisasi proyek**, bukan untuk fase implementasi fitur aktif.
 
 ---
 
@@ -8,16 +8,15 @@ Skill otomasi untuk menginisialisasi dan menyusun file konfigurasi *steering* AI
 
 1. **🛡️ Kebijakan Non-Destruktif & Smart-Merge**:
    - **Zero Source-Code Modification**: Tidak akan pernah mengubah atau menghapus kode sumber aplikasi (`src/`, `app/`, dsb.).
-   - **Preserve Existing Rules/Docs**: Jika file seperti `GEMINI.md` atau `docs/prd.md` sudah ada, skill akan membaca dan mempertahankan isinya, hanya melakukan *smart-merge* untuk bagian yang belum tersedia.
+   - **Preserve Existing Rules/Docs**: Jika file seperti `GEMINI.md` atau `docs/prd.md` sudah ada, skill membaca dan mempertahankan isinya, hanya melakukan *smart-merge* untuk bagian yang belum tersedia.
    - **No Duplicate Git Excludes**: Mengecek `.git/info/exclude` sebelum menambahkan *entry* baru agar tidak terjadi duplikasi.
 
-2. **🎤 Grill-Me Interview (Konsultasi Interaktif)**:
-   Sebelum men-generate file, AI akan menganalisis *stack* proyek dan mengajukan pertanyaan terarah seputar:
-   - Dokumen referensi eksternal (API spec, skema SQL, dsb.).
+2. **🎤 Grill-Me Interview (Konsultasi Pondasi Proyek)**:
+   Sebelum men-generate file, AI akan menganalisis *stack* proyek dan mengajukan pertanyaan terarah khusus pondasi arsitektur:
+   - Dokumen referensi eksternal (API spec third-party, skema database SQL, arsitektur flow).
    - Arsitektur target, database, dan ORM/caching layer.
    - Standar autentikasi & otorisasi (JWT, Session, OAuth2, RBAC).
-   - Kebutuhan testing dan deployment runbook.
-   - Prioritas fitur utama untuk PRD.
+   - Kebutuhan test runner dan deployment runbook.
 
 3. **🔒 Keamanan Git Lokal (`.git/info/exclude`)**:
    Secara otomatis mendaftarkan file konfigurasi lokal ke dalam `.git/info/exclude` agar aturan AI personal tidak mengotori *commit* repositori tim.
@@ -26,7 +25,7 @@ Skill otomasi untuk menginisialisasi dan menyusun file konfigurasi *steering* AI
 
 ## 📁 Struktur File yang Di-generate
 
-Ketika skill ini dijalankan pada suatu proyek, struktur berikut akan disiapkan:
+Ketika skill ini dijalankan pada suatu proyek, struktur fondasi berikut akan disiapkan:
 
 ```text
 <project-root>/
@@ -40,10 +39,8 @@ Ketika skill ini dijalankan pada suatu proyek, struktur berikut akan disiapkan:
 │       ├── testing/SKILL.md             # Instruksi test runner dan panduan pengujian
 │       └── deployment/SKILL.md          # Runbook build dan prosedur deployment
 └── docs/
-    ├── prd.md                           # Master Product Requirement Document
-    ├── references/                      # Dokumen referensi eksternal (jika ada)
-    └── specs/
-        └── <feature-name>.md            # Spesifikasi teknis terperinci per fitur/tiket
+    ├── prd.md                           # Master Product Requirement Document (High-level overview & scope)
+    └── references/                      # Dokumen referensi eksternal (jika ada)
 ```
 
 ---
@@ -56,25 +53,23 @@ Skill ini akan aktif secara otomatis jika Anda menggunakan salah satu pemicu ber
 - `init steering` / `scaffold steering`
 - `setup rules` / `buat steering files`
 - `inisialisasi aturan proyek`
-- `buat spec` / `tambah spec` / `job baru` / `new spec`
 
 ---
 
-## 🛠️ Contoh Skenario Penggunaan
+## 🛠️ Contoh Alur Penggunaan
 
-### 1. Inisialisasi Proyek Baru / Eksisting
+### Inisialisasi Proyek Baru / Eksisting
+Ketik di chat:
 ```text
 /scaffold-steering
 ```
-AI akan memindai *dependencies* (misal: `pom.xml`, `package.json`, `go.mod`), mengajukan 5 pertanyaan arsitektur, lalu men-generate seluruh struktur *steering files* di atas.
-
-### 2. Membuat Job / Spesifikasi Fitur Baru
+atau:
 ```text
-buat spec untuk fitur integrasi payment gateway
+init steering untuk proyek ini
 ```
-AI akan membuat file spesifikasi terdedikasi di `docs/specs/payment-gateway.md` yang memuat:
-- Overview & Business Goal
-- Impact & Scope Analysis
-- API Contracts (DTO Request/Response)
-- Database & Schema Changes (ANSI SQL / Entity)
-- Business Logic & Validations
+
+AI akan:
+1. Memindai *dependencies* (misal: `pom.xml`, `package.json`, `go.mod`, dsb.).
+2. Mengajukan 4 pertanyaan arsitektur dan fondasi sistem.
+3. Men-generate seluruh struktur *rules*, *skills*, dan *docs* fondasi di atas.
+4. Memastikan `.git/info/exclude` mengamankan file steering AI dari Git commit tim.
