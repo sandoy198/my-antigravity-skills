@@ -1,6 +1,6 @@
 # My Antigravity Skills
 
-Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat alur kerja pengembangan perangkat lunak, standardisasi arsitektur, dan otomasi *prompting*.
+Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat alur kerja pengembangan perangkat lunak, standardisasi arsitektur, otomasi orkestrasi subagent, dan optimasi efisiensi token (*tokenomics*).
 
 ---
 
@@ -8,7 +8,8 @@ Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat
 
 | Skill | Deskripsi Singkat | Trigger Utama |
 | :--- | :--- | :--- |
-| **`scaffold-steering`** | Inisialisasi struktur *steering files* universal (`AGENTS.md`, `.agents/rules/`, `docs/prd.md`) melalui wawancara interaktif (*Grill-Me interview*), siap di-*track* Git untuk kolaborasi tim, serta dukungan migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
+| **`orchestrator`** | Multi-subagent orchestrator pipeline dengan gerbang persetujuan ketat (*strict approval gates*): Analisis $\rightarrow$ Approval $\rightarrow$ Plan Antigravity 2.0 (`/plan`) $\rightarrow$ Eksekusi Subagent Builder $\rightarrow$ Standby. Dilengkapi integrasi E2E Playwright portabel, kueri ANSI SQL, dan optimasi token presisi. | `/orchestrate`, `orchestrate:`, `mode orchestrator`, `jalankan orchestrator` |
+| **`scaffold-steering`** | Inisialisasi struktur *steering files* modular dan *vendor-neutral* (`AGENTS.md` maks 80 baris dengan *Codebase Hot-Paths*, `.agents/rules/`, `docs/prd.md`) via wawancara interaktif (*Grill-Me interview*), terintegrasi pemetaan E2E Orchestrator, serta migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
 
 ---
 
@@ -34,10 +35,16 @@ git clone https://github.com/sandoy198/my-antigravity-skills.git ~/.gemini/confi
 ---
 
 ### Opsi 2: Pasang Hanya Skill Tertentu (Global)
-Jika Anda hanya ingin memasang skill spesifik (contoh: `scaffold-steering`) tanpa meng-clone seluruh repositori:
+Jika Anda hanya ingin memasang skill spesifik (contoh: `orchestrator` atau `scaffold-steering`) tanpa meng-clone seluruh repositori:
 
 **Windows (PowerShell):**
 ```powershell
+# Contoh memasang skill orchestrator
+$target = "$HOME\.gemini\config\skills\orchestrator"
+New-Item -ItemType Directory -Force -Path $target
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sandoy198/my-antigravity-skills/main/orchestrator/SKILL.md" -OutFile "$target\SKILL.md"
+
+# Contoh memasang skill scaffold-steering
 $target = "$HOME\.gemini\config\skills\scaffold-steering"
 New-Item -ItemType Directory -Force -Path $target
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sandoy198/my-antigravity-skills/main/scaffold-steering/SKILL.md" -OutFile "$target\SKILL.md"
@@ -45,8 +52,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sandoy198/my-antigravi
 
 **macOS / Linux (Bash):**
 ```bash
-mkdir -p ~/.gemini/config/skills/scaffold-steering
-curl -fsSL https://raw.githubusercontent.com/sandoy198/my-antigravity-skills/main/scaffold-steering/SKILL.md -o ~/.gemini/config/skills/scaffold-steering/SKILL.md
+# Contoh memasang skill orchestrator
+mkdir -p ~/.gemini/config/skills/orchestrator
+curl -fsSL https://raw.githubusercontent.com/sandoy198/my-antigravity-skills/main/orchestrator/SKILL.md -o ~/.gemini/config/skills/orchestrator/SKILL.md
 ```
 
 ---
@@ -59,6 +67,8 @@ Jika Anda ingin skill tertentu langsung tersedia bagi seluruh anggota tim di dal
    <project-root>/
    └── .agents/
        └── skills/
+           ├── orchestrator/
+           │   └── SKILL.md
            └── scaffold-steering/
                └── SKILL.md
    ```
@@ -71,8 +81,19 @@ Jika Anda ingin skill tertentu langsung tersedia bagi seluruh anggota tim di dal
 
 Setelah terpasang, panggil skill langsung melalui prompt Antigravity menggunakan *slash command* atau frasa pemicu (*trigger phrases*).
 
-### Contoh Penggunaan `scaffold-steering`:
-Ketik perintah berikut di chat:
+### 1. Penggunaan `orchestrator`:
+Gunakan saat menangani tiket perbaikan bug kompleks atau pengembangan fitur baru dengan delegasi penuh ke subagent:
+```text
+/orchestrate
+Perbaiki bug pada kalkulasi diskon di modul pembayaran
+```
+Pipeline akan menjalankan:
+1. **Fase 1 (Analisis)**: Subagent Analyzer memetakan masalah hingga koordinat baris presisi.
+2. **Fase 2 (Planning)**: Menyusun `implementation_plan.md` dengan persetujuan tombol **Proceed** dan konfirmasi strategi verifikasi E2E.
+3. **Fase 3 (Eksekusi)**: Subagent Builder mengeksekusi perubahan kode dan verifikasi.
+
+### 2. Penggunaan `scaffold-steering`:
+Gunakan saat memulai atau merapikan aturan proyek:
 ```text
 /scaffold-steering
 ```
@@ -80,12 +101,7 @@ atau dengan kalimat langsung:
 ```text
 init steering untuk proyek ini
 ```
-
-Agent akan:
-1. Mendeteksi *tech stack* dan memeriksa apakah sudah ada `GEMINI.md` atau `AGENTS.md`.
-2. Melakukan wawancara interaktif (*Grill-Me interview*) mengenai database, arsitektur, autentikasi, referensi dokumen eksternal, dan test/deploy runbook.
-3. Men-generate atau memigrasikan aturan ke dokumen universal **`AGENTS.md`**, `.agents/rules/`, dan `docs/prd.md`.
-4. Memastikan seluruh file siap di-*commit* dan di-*push* ke Git untuk disinkronkan berkala dengan tim.
+Agent akan memindai konfigurasi proyek, melakukan *Grill-Me interview*, dan men-generate `AGENTS.md` (maksimal 80 baris dengan *Codebase Hot-Paths*) serta aturan pendukung yang siap di-*track* Git.
 
 ---
 
@@ -93,6 +109,9 @@ Agent akan:
 
 ```text
 my-antigravity-skills/
+├── orchestrator/
+│   ├── README.md
+│   └── SKILL.md
 ├── scaffold-steering/
 │   ├── README.md
 │   └── SKILL.md
@@ -106,7 +125,7 @@ my-antigravity-skills/
 
 ## 🔄 Pembaruan Skill
 
-Untuk memperbarui skill ke versi terbaru:
+Untuk memperbarui seluruh skill ke versi terbaru:
 
 ```powershell
 cd "$HOME\.gemini\config\skills\my-antigravity-skills"

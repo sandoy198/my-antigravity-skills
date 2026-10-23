@@ -1,98 +1,67 @@
 ---
 name: scaffold-steering
 description: >
-  Scaffold and initialize standard workspace steering files, rules (AGENTS.md, .agents/rules/),
-  skills (.agents/skills/), and PRD documentation (docs/prd.md) for the active project, with an
-  interactive "Grill-Me" interview that asks the developer first regarding their tech stack,
-  architecture, and any external references/docs before generating them.
-  Supports smart migration from legacy GEMINI.md to universal AGENTS.md while preserving existing rules.
-  Ensures steering files remain version-controlled in Git for seamless team synchronization and periodic pushes.
-  Trigger when the user says "init steering", "scaffold steering", "setup rules", "buat steering files",
-  "inisialisasi aturan proyek", or "/scaffold-steering".
+  Scaffold and initialize workspace steering files (AGENTS.md, .agents/rules/, .agents/skills/, docs/) via an interactive "Grill-Me" interview tailored to the detected project stack.
+  Supports smart-merge on existing files, migration from legacy GEMINI.md to AGENTS.md, and Playwright E2E project mapping for orchestrator integration.
+  Trigger when the user says "init steering", "scaffold steering", "setup rules", "buat steering files", "inisialisasi aturan proyek", or "/scaffold-steering".
 ---
 
-# Scaffold Steering Files & Interactive Setup Skill
+# Scaffold Steering & Interactive Setup Skill
 
-Use this skill to establish a clean, modular, vendor-neutral, and version-controlled steering setup during project initialization. The agent will interactively consult the developer first to understand their specific architecture, stack preferences, and external reference documents before finalizing the files.
+Inisialisasi aturan proyek (`AGENTS.md`, `.agents/`, `docs/`) secara modular, *vendor-neutral*, dan *version-controlled* di Git. Agen wajib mendeteksi stack terlebih dahulu dan melakukan *Grill-Me interview* singkat sebelum membuat folder/file agar bebas dari *bloat* atau template generik yang tidak relevan.
 
-## 🛡️ Non-Destructive & Smart-Merge Policy (CRITICAL)
+---
 
-When operating on **existing projects** or repositories where some steering files already exist:
-1. **Zero Source-Code Modification**: Never alter or delete existing source code (`src/`, `app/`, etc.).
-2. **Preserve Existing Rules/Docs**: If a target file (e.g., `AGENTS.md`, `GEMINI.md`, `docs/prd.md`, `.agents/rules/*.md`) already exists:
-   - **READ IT FIRST**.
-   - **DO NOT OVERWRITE BLINDLY**.
-   - Preserve all existing custom rules, project context, and user notes.
-   - Only merge/append new missing sections or update with new answers from the interview.
-3. **Smart Migration from `GEMINI.md` to `AGENTS.md`**:
-   - If `GEMINI.md` exists and `AGENTS.md` does not: Read all existing contents from `GEMINI.md`, migrate/merge them into `AGENTS.md` so that other vendor agents can read them, and convert `GEMINI.md` into a lightweight pointer:
+## 🛡️ Kebijakan Non-Destruktif & Smart-Merge (CRITICAL)
+
+1. **Zero Source-Code Modification**: Dilarang mengubah/menghapus kode sumber proyek (`src/`, `app/`, `web/`, dll.).
+2. **Preserve & Smart-Merge**: Jika file target (`AGENTS.md`, `GEMINI.md`, `docs/prd.md`, `.agents/rules/*.md`) sudah ada:
+   - **WAJIB BACA TERLEBIH DAHULU** sebelum menulis.
+   - Pertahankan seluruh aturan kustom dan konteks yang sudah ada; hanya tambahkan/perbarui bagian yang belum ada sesuai hasil interview.
+3. **Migrasi `GEMINI.md` $\rightarrow$ `AGENTS.md`**:
+   - Jika `GEMINI.md` ada namun `AGENTS.md` belum ada: Pindahkan seluruh isinya ke `AGENTS.md`, lalu ubah isi `GEMINI.md` menjadi pointer ringan:
      ```markdown
      # Project Steering
      See [AGENTS.md](AGENTS.md) for full project rules and instructions.
      ```
-   - If `AGENTS.md` already exists: Smart-merge into `AGENTS.md`.
-4. **Git Version-Controlled by Default**: All steering files (`AGENTS.md`, `.agents/`, `docs/`) must remain actively tracked by Git for continuous team sharing and periodic pushes.
+4. **On-Demand Creation & Token Budget Cap (Anti-Bloat)**:
+   - Jangan membuat folder/file kosong atau rule yang tidak relevan dengan stack proyek.
+   - **Tokenomics Rule**: File `AGENTS.md` wajib ditulis ultra-padat (**maksimal 80 baris**) agar tidak membebani *input token* di setiap sesi percakapan. Detail panjang wajib dipisah ke `.agents/rules/` atau `docs/`.
+5. **Git Tracked**: Pastikan file steering tidak masuk ke `.gitignore` (kecuali diminta pengguna) agar tersinkronisasi di repositori tim.
 
 ---
 
-## Execution Workflow
+## 🔄 Alur Eksekusi (Sequential Workflow)
 
-Execute the following steps in sequence:
+### Step 1: Deteksi Stack, Graphify & Konfigurasi Eksisting
+Periksa root workspace secara terarah (misal: `build.xml`, `pom.xml`, `package.json`, `go.mod`, `composer.json`, struktur folder `src/` atau `web/`, keberadaan `graphify-out/graph.json`, serta `AGENTS.md` / `GEMINI.md`) tanpa melakukan *full recursive scan* yang lambat.
 
-### Step 1: Detect Project Stack & Existing Configs
-Examine the workspace root (e.g., `package.json`, `go.mod`, `pom.xml`, `requirements.txt`, `composer.json`, `.eslintrc`, etc.) to understand existing frameworks, linters, and conventions.
-Check whether `GEMINI.md` or `AGENTS.md` already exists to prepare for smart-merging or migration.
+### Step 2: Grill-Me Interview (Tanya Dulu Sebelum Generate!)
+Sajikan ringkasan singkat stack yang terdeteksi, lalu ajukan pertanyaan konfirmasi ke developer (gunakan tool `ask_question` atau daftar pertanyaan ringkas):
 
-### Step 2: Establish Core Directory Hierarchy
-Create baseline directories:
-- `.agents/rules/`
-- `.agents/skills/testing/`
-- `.agents/skills/deployment/`
-- `docs/`
+1. **Arsitektur, Build & Database**:
+   - Konfirmasi framework/ORM utama (misal: Struts/WebWork, JSP, Hibernate `.hbm.xml`, Spring, atau Node/Go) dan cara build/run (misal: dikelola via IntelliJ IDEA atau CLI tertentu).
+2. **Integrasi E2E Playwright & Graphify (Sinkronisasi Orchestrator)**:
+   - *"Apakah aplikasi ini sudah memiliki project E2E Playwright mandiri? Jika ada, di mana path foldernya dan apa command test runner-nya?"*
+   - Jika `graphify-out/` belum ada: *"Apakah ingin sekalian mengaktifkan indeks Knowledge Graph (`graphify`) atau mencatat statusnya di `AGENTS.md` untuk menghemat token pencarian?"*
+3. **Kebutuhan Rule Tambahan & Dokumen (`docs/prd.md` / `docs/references/`)**:
+   - *"Selain `AGENTS.md` utama, apakah perlu dibuatkan file terpisah untuk `.agents/rules/` (code conventions / API / security), `docs/prd.md`, atau folder `docs/references/`?"*
 
-### Step 3: Interactive Consultation & Grill-Me Interview (Ask First!)
-Before generating heavy content or arbitrary reference files, present what was detected and **ask the developer targeted questions** focused strictly on project initialization and architecture foundation:
+**STOP & TUNGGU** jawaban developer sebelum membuat file.
 
-1. **External References & Docs**:
-   - *"Apakah Anda memiliki dokumen referensi eksternal yang ingin dimasukkan (misal: API spec third-party, skema database SQL, arsitektur flow)? Jika ada, saya akan siapkan folder `docs/references/` dan mengaitkannya ke PRD."*
-2. **Target Architecture & DB**:
-   - *"Database, ORM, atau caching layer apa yang menjadi prioritas di project ini?"*
-3. **Authentication & Authorization**:
-   - *"Metode autentikasi apa yang digunakan (JWT, Session, OAuth2, RBAC)?"*
-4. **Testing & Deployment Needs**:
-   - *"Apakah ada alur test atau deployment khusus yang butuh skrip pembantu (`scripts/`) atau panduan teknis (`references/`)?"*
+### Step 3: Generate File Steering Sesuai Jawaban
 
-### Step 4: Generate Tailored Rule Files
+1. **`AGENTS.md` (Wajib - Root Proyek, Maksimal 80 Baris)**:
+   - Ikhtisar arsitektur, tech stack, dan konvensi kode spesifik proyek (pola Action/Controller, Service, DAO, atau Page Object).
+   - **Codebase Hot-Paths (Token-Saver Map)**: Daftar path eksak ke direktori modul inti (misal: letak folder Action, DAO, `.hbm.xml`, JSP/UI, dan konfigurasi utama) agar subagent tidak perlu melakukan *blind search/grep* berulang.
+   - Aturan Build & Environment (misal: *No CLI build* jika dikelola di IntelliJ IDEA, standar ANSI SQL untuk perubahan `.hbm.xml`).
+   - **Mapping Orchestrator (Playwright & Graphify)**: Catat status keberadaan project Playwright (path & command runner) serta keberadaan `graphify-out/graph.json` (instruksi *Graphify-First query* sebelum baca file).
+2. **`.agents/rules/*.md` (Opsional - Sesuai Permintaan/Stack)**:
+   - Buat hanya jika diminta atau jika aturan terlalu panjang untuk ditaruh di `AGENTS.md` (misal: `code-conventions.md`, `api-standards.md`, atau `security-policies.md` yang disesuaikan dengan stack asli proyek, bukan template generik).
+3. **`.agents/skills/` & `docs/` (Opsional - Sesuai Permintaan)**:
+   - `docs/prd.md`: Konteks produk, *scope* sistem, dan *non-functional requirements*.
+   - `docs/references/`: Folder dokumen referensi eksternal (API spec, skema DB).
+   - `.agents/skills/<nama-skill>/SKILL.md`: Hanya jika proyek membutuhkan workflow otomasi khusus (testing/deployment).
 
-1. **`AGENTS.md`** (Project Root - Universal Standard):
-   - Project overview, foundational architecture, and core principles aligned with developer responses and cross-vendor agent readability.
-   - Explicit reference: *"Product specifications and system overview are defined in `docs/prd.md`."*
-   - If references were requested: Link to `docs/references/`.
-   - If legacy `GEMINI.md` existed, ensure all previous rules are preserved inside `AGENTS.md`, and replace `GEMINI.md` with the pointer to `AGENTS.md`.
-
-2. **`.agents/rules/code-conventions.md`**:
-   - Reflect the actual coding style already used in the codebase (naming, import structuring, anti-patterns).
-
-3. **`.agents/rules/api-standards.md`**:
-   - REST / GraphQL conventions matching existing API responses.
-   - Standard JSON response format: `{ success: boolean, data?: any, error?: { code: string, message: string } }`.
-
-4. **`.agents/rules/security-policies.md`**:
-   - Validation libraries (Zod, Pydantic, etc.).
-   - Sanitization against SQL injection, XSS, and CSRF.
-   - Prohibition against hardcoding secrets, credentials, or tokens.
-
-### Step 5: Generate Skills & Requested References
-- **`.agents/skills/testing/SKILL.md`**: Tailored test runner instructions. Create `references/` and `scripts/` if requested.
-- **`.agents/skills/deployment/SKILL.md`**: Build & deployment runbook. Create `references/` and `scripts/` if requested.
-- **`docs/references/`**: Created if the developer confirmed having external documents, with a starter placeholder/index.
-
-### Step 6: Generate or Merge Master PRD (`docs/prd.md`)
-Populate `docs/prd.md` with high-level foundational context (tanpa mendikte prioritas fitur implementasi):
-- Product / System Overview & High-level Goals.
-- User Personas & General System Scope.
-- System Architecture Overview.
-- Non-Functional Requirements (Security, Performance, Logging).
-
-### Step 7: Confirmation & Summary
-Print a clean summary tree of the generated structure, showing all created rules, skills, references, and confirming that files are ready for Git commit.
+### Step 4: Konfirmasi Akhir
+Tampilkan ringkasan pohon direktori (*directory tree*) dari file yang berhasil dibuat atau diperbarui.
