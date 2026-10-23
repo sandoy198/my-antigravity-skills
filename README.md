@@ -8,7 +8,7 @@ Koleksi kustom *skills* untuk Google Antigravity dan Gemini CLI guna mempercepat
 
 | Skill | Deskripsi Singkat | Trigger Utama |
 | :--- | :--- | :--- |
-| **`orchestrator`** | Multi-subagent orchestrator pipeline dengan gerbang persetujuan ketat (*strict approval gates*): Analisis $\rightarrow$ Approval $\rightarrow$ Plan Antigravity 2.0 (`/plan`) $\rightarrow$ Eksekusi Subagent Builder $\rightarrow$ Standby. Dilengkapi integrasi E2E Playwright portabel, kueri ANSI SQL, dan optimasi token presisi. | `/orchestrate`, `orchestrate:`, `mode orchestrator`, `jalankan orchestrator` |
+| **`orchestrator`** | Multi-subagent orchestrator pipeline dengan gerbang persetujuan ketat (*strict approval gates*): Analisis $\rightarrow$ Approval $\rightarrow$ Plan Antigravity 2.0 (`/plan`) $\rightarrow$ Eksekusi Subagent Builder $\rightarrow$ Standby. Dilengkapi aturan *Smart Threshold Subagent Builder* (default 1 builder, max 2 paralel), pembersihan lifecycle otomatis, integrasi E2E Playwright portabel, kueri ANSI SQL, dan optimasi token presisi. | `/orchestrate`, `orchestrate:`, `mode orchestrator`, `jalankan orchestrator` |
 | **`scaffold-steering`** | Inisialisasi struktur *steering files* modular dan *vendor-neutral* (`AGENTS.md` maks 80 baris dengan *Codebase Hot-Paths*, `.agents/rules/`, `docs/prd.md`) via wawancara interaktif (*Grill-Me interview*), terintegrasi pemetaan E2E Orchestrator, serta migrasi dari `GEMINI.md`. | `/scaffold-steering`, `init steering`, `setup rules`, `buat steering files` |
 
 ---
@@ -88,9 +88,9 @@ Gunakan saat menangani tiket perbaikan bug kompleks atau pengembangan fitur baru
 Perbaiki bug pada kalkulasi diskon di modul pembayaran
 ```
 Pipeline akan menjalankan:
-1. **Fase 1 (Analisis)**: Subagent Analyzer memetakan masalah hingga koordinat baris presisi.
+1. **Fase 1 (Analisis)**: Subagent Analyzer tunggal memetakan masalah hingga koordinat baris presisi, lalu subagent analyzer ditutup untuk menghemat resource.
 2. **Fase 2 (Planning)**: Menyusun `implementation_plan.md` dengan persetujuan tombol **Proceed** dan konfirmasi strategi verifikasi E2E.
-3. **Fase 3 (Eksekusi)**: Subagent Builder mengeksekusi perubahan kode dan verifikasi.
+3. **Fase 3 (Eksekusi & Smart Threshold)**: Subagent Builder (default 1 builder) mengeksekusi perubahan kode dan verifikasi, kemudian seluruh subagent aktif dibersihkan saat tuntas.
 
 ### 2. Penggunaan `scaffold-steering`:
 Gunakan saat memulai atau merapikan aturan proyek:

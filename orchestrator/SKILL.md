@@ -58,13 +58,14 @@ Agen utama bertindak murni sebagai **Dispatcher & Controller** dengan **Approval
 ## 🔄 Alur Kerja Pipeline
 
 ### Fase 1: Analisis & Grill-Me (Subagent Analyzer)
-1. Spawn subagent via `invoke_subagent` (`TypeName: "research"` atau `"self"`, `Role: "Impact Analyzer"`, `Model: "inherit"`). Batasi investigasi hanya pada direktori/paket terkait:
+1. Spawn **1 subagent tunggal** via `invoke_subagent` (`TypeName: "research"`, `Role: "Impact Analyzer"`, `Model: "inherit"`). Batasi investigasi hanya pada direktori/paket terkait:
    - Jika `graphify-out/graph.json` ada $\rightarrow$ instruksikan subagent untuk query graph terlebih dahulu guna memetakan relasi tanpa *blind search*.
    - Instruksikan subagent mengembalikan temuan disertai **koordinat baris presisi (`File#Lxx-Lyy`)**.
-2. Evaluasi hasil:
+2. Setelah laporan diterima, tutup subagent analyzer via `manage_subagents` (`Action: "kill"`) agar tidak menumpuk.
+3. Evaluasi hasil:
    - Jika ada ambiguitas $\rightarrow$ jalankan *Grill-Me interview* singkat.
    - Jika jelas $\rightarrow$ sajikan ringkasan analisis teknis (gaya Caveman).
-3. **STOP & TUNGGU**: Minta konfirmasi pengguna (*"Analisis selesai. Ketik `/plan` atau 'lanjut' untuk menyusun implementation plan."*).
+4. **STOP & TUNGGU**: Minta konfirmasi pengguna (*"Analisis selesai. Ketik `/plan` atau 'lanjut' untuk menyusun implementation plan."*).
 
 ### Fase 2: Planning (`/plan` Artifact) & Konfirmasi E2E
 1. Setelah disetujui, buat/perbarui artifact `implementation_plan.md` (`RequestFeedback: true`) yang memuat:
@@ -77,8 +78,11 @@ Agen utama bertindak murni sebagai **Dispatcher & Controller** dengan **Approval
    - **Jika project Playwright belum ada**: Tanyakan ke pengguna sebelum eksekusi untuk memilih: **(1) Buat prompt untuk session project Playwright terpisah**, **(2) Verifikasi via MCP Browser** *(jika MCP tersedia)*, atau **(3) Skip E2E / Verifikasi Manual**.
 3. **STOP & TUNGGU**: Tunggu pengguna menekan tombol **Proceed** (dan menjawab pilihan E2E jika belum ada project Playwright).
 
-### Fase 3: Eksekusi (Subagent Builder) & Verifikasi
-1. Setelah plan disetujui, spawn subagent via `invoke_subagent` (`TypeName: "self"`, `Role: "Code Builder"`, `Model: "inherit"`).
+### Fase 3: Eksekusi (Smart Threshold Subagent Builder) & Verifikasi
+1. Setelah plan disetujui, spawn Subagent Builder via `invoke_subagent` (`TypeName: "self"`, `Role: "Code Builder"`, `Model: "inherit"`) dengan aturan **Smart Threshold**:
+   - **Default (1–5 file dalam 1 repo)**: Wajib gunakan **1 Subagent Builder tunggal** untuk menyelesaikan seluruh file sekaligus (hemat token inisialisasi & menjaga konsistensi antar layer Action/DAO/JSP/HBM).
+   - **Skala Besar / Beda Repo (Maksimal 2 Subagent Paralel)**: Hanya boleh men-spawn maksimal **2 Subagent Builder paralel** jika memisahkan pengerjaan kode aplikasi utama dengan repo Playwright terpisah, atau jika memodifikasi $>5$ file di modul yang saling independen.
+   - **Reuse untuk Revisi**: Jika ada revisi lanjutan pada tiket yang sama, **reuse** Subagent Builder yang ada via `send_message` (jangan spawn subagent baru).
 2. Instruksikan Subagent Builder untuk:
    - Membaca hanya pada rentang baris yang ditargetkan di plan (`StartLine`/`EndLine`) untuk menghemat token.
    - Mengimplementasikan seluruh perubahan kode sesuai plan dengan prinsip **Ponytail** & Clean Code (tanpa komentar yang digenerate).
@@ -89,7 +93,7 @@ Agen utama bertindak murni sebagai **Dispatcher & Controller** dengan **Approval
    - **Belum Ada $\rightarrow$ Pilih Pakai MCP**: Jalankan verifikasi UI menggunakan MCP Browser (`playwright` / `chrome-devtools`).
    - **Belum Ada $\rightarrow$ Pilih Skip / Manual**: Lewati langkah otomasi browser dan langsung menuju laporan akhir.
    - **Graphify Sync (Opsional - Hanya jika `graphify-out/` & CLI `graphify` tersedia)**: Jalankan update AST ringan (`graphify <path> --update --no-viz`) agar knowledge graph tetap sinkron.
-4. Perbarui artifact `walkthrough.md`.
+4. Perbarui artifact `walkthrough.md` dan **bersihkan subagent aktif** via `manage_subagents` (`Action: "kill_all"`) saat tiket telah tuntas.
 5. **STOP & STANDBY**:
    - Laporkan hasil eksekusi kode dan hasil verifikasi secara ringkas.
    - Sertakan blok kode ` ```sql ` berisi query DDL/DML (jika ada perubahan database/HBM) dan/atau blok **Prompt Playwright** (jika pengguna memilih buat di session lain).
